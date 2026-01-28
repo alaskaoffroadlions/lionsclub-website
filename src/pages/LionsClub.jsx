@@ -91,15 +91,8 @@ export default function LionsClubPage() {
       {/* TOP BACK BAR */}
       <div className="bg-neutral-50 border-b border-neutral-200">
         <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between gap-4">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-lg border border-neutral-300 px-4 py-2 text-sm font-semibold hover:bg-neutral-100 transition"
-          >
-            ← Back to Alaska Offroad Expedition
-          </Link>
-          <p className="hidden md:block text-xs text-neutral-500">
-            Southcentral Alaska Offroad &amp; Outdoor Lions Club • Adventure with purpose
-          </p>
+          
+       
         </div>
       </div>
 
@@ -109,7 +102,7 @@ export default function LionsClubPage() {
         <div
           className="absolute inset-0 opacity-50"
           style={{
-            backgroundImage: "url('/images/lions-join-bg.jpg')",
+            backgroundImage: "url('/images/brand/lions-join-bg.jpg')",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -206,7 +199,7 @@ export default function LionsClubPage() {
             <div className="flex justify-center md:justify-end">
               <div className="w-full">
                 <img
-                  src="/images/Offical SAOOLC Logo.png"
+                  src="/images/brand/Offical SAOOLC Logo.png"
                   alt="Southcentral Alaska Off-Road & Outdoor Lions Club logo"
                   className="w-full max-w-[200px] md:max-w-[500px] h-auto object-contain drop-shadow-2xl mx-auto"
                   loading="lazy"
