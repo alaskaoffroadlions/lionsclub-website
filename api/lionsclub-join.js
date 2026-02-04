@@ -29,7 +29,7 @@ export default async function handler(req, res) {
 
     // ---- CONFIGURE THESE ADDRESSES ----
     const FROM = "Lions Club <noreply@alaskaoffroadexpedition.com>";
-    const ADMIN_TO = "Cooper <cooper@alaskaoffroadexpedition.com>";
+    const ADMIN_TO = "Cooper <alaskaoffroadlions@gmail.com>";
 
     const subjectAdmin = `New Lions Club membership interest — ${name}`;
     const subjectUser  = "Thanks for your interest — Southcentral Offroad & Outdoor Lions Club";
