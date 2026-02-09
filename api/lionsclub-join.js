@@ -2,14 +2,22 @@
 import { Resend } from "resend";
 
 export default async function handler(req, res) {
+  // Only allow POST
   if (req.method !== "POST") {
     res.setHeader("Allow", ["POST"]);
     return res.status(405).json({ ok: false, error: "Method Not Allowed" });
   }
 
   try {
+    // Basic runtime sanity checks
+    if (!process.env.RESEND_API_KEY) {
+      return res.status(500).json({ ok: false, error: "Server misconfig: RESEND_API_KEY missing" });
+    }
+
     const resend = new Resend(process.env.RESEND_API_KEY);
 
+    // Parse body (expects JSON)
+    const body = req.body || {};
     const {
       name = "",
       email = "",
@@ -18,28 +26,38 @@ export default async function handler(req, res) {
       involvement = [],
       message = "",
       honeypot = "",
-    } = req.body || {};
+    } = body;
 
-    if (honeypot) {
-  console.warn("HONEYPOT TRIGGERED:", honeypot);
-  return res.status(400).json({ ok: false, error: "Bot check triggered." });
-}
-    if (!name?.trim() || !email?.trim()) {
+    console.log("LIONSCLUB-JOIN HIT", {
+      hasBody: !!req.body,
+      nameProvided: !!String(name).trim(),
+      emailProvided: !!String(email).trim(),
+      honeypotLen: String(honeypot || "").length,
+    });
+
+    // Honeypot: if it triggers, RETURN AN ERROR so you can see it (no silent success)
+    if (String(honeypot || "").trim().length > 0) {
+      console.warn("HONEYPOT TRIGGERED:", honeypot);
+      return res.status(400).json({ ok: false, error: "Bot check triggered." });
+    }
+
+    // Validation
+    if (!String(name).trim() || !String(email).trim()) {
       return res.status(400).json({ ok: false, error: "Name and email are required." });
     }
 
     // ---- CONFIGURE THESE ADDRESSES ----
-    // Must be from your VERIFIED domain in Resend:
+    // MUST be from your verified domain in Resend
     const FROM = "Southcentral Alaska Offroad & Outdoor Lions Club <noreply@alaskaoffroadlions.org>";
 
-    // Where admin notifications go (can be Gmail or an @alaskaoffroadlions.org inbox):
-    const ADMIN_TO = "Cooper <alaskaoffroadlions@gmail.com>";
+    // Admin destination (use your gmail until you have a real @alaskaoffroadlions.org mailbox)
+    const ADMIN_TO = "alaskaoffroadlions@gmail.com";
 
-    // Where replies should go (your main club inbox / your email)
+    // Where user replies should go
     const CLUB_REPLY_TO = "alaskaoffroadlions@gmail.com";
 
-    const subjectAdmin = `New Lions Club membership interest — ${name}`;
-    const subjectUser  = "Thanks for your interest — Southcentral Alaska Offroad & Outdoor Lions Club";
+    const subjectAdmin = `New Lions Club membership interest — ${String(name).trim()}`;
+    const subjectUser = "Thanks for your interest — Southcentral Alaska Offroad & Outdoor Lions Club";
 
     const safe = (x) => (Array.isArray(x) ? x.join(", ") : String(x || "").trim());
 
@@ -52,46 +70,30 @@ export default async function handler(req, res) {
               Southcentral Alaska Offroad &amp; Outdoor Lions Club
             </p>
           </div>
+
           <div style="padding:20px 24px 8px;">
             <h2 style="margin:0 0 12px;font-size:16px;font-weight:600;">Contact Details</h2>
             <table style="width:100%;border-collapse:collapse;font-size:14px;margin-bottom:12px;">
               <tbody>
-                <tr>
-                  <td style="padding:4px 0;width:120px;color:#6b7280;font-weight:500;">Name</td>
-                  <td style="padding:4px 0;color:#111827;">${safe(name)}</td>
-                </tr>
-                <tr>
-                  <td style="padding:4px 0;color:#6b7280;font-weight:500;">Email</td>
-                  <td style="padding:4px 0;">
-                    <a href="mailto:${safe(email)}" style="color:#2563eb;text-decoration:none;">${safe(email)}</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td style="padding:4px 0;color:#6b7280;font-weight:500;">Phone</td>
-                  <td style="padding:4px 0;color:#111827;">${safe(phone) || "-"}</td>
-                </tr>
-                <tr>
-                  <td style="padding:4px 0;color:#6b7280;font-weight:500;">City / Region</td>
-                  <td style="padding:4px 0;color:#111827;">${safe(city) || "-"}</td>
-                </tr>
-                <tr>
-                  <td style="padding:4px 0;color:#6b7280;font-weight:500;">Involvement</td>
-                  <td style="padding:4px 0;color:#111827;">${safe(involvement) || "-"}</td>
-                </tr>
+                <tr><td style="padding:4px 0;width:120px;color:#6b7280;font-weight:500;">Name</td><td style="padding:4px 0;color:#111827;">${safe(name)}</td></tr>
+                <tr><td style="padding:4px 0;color:#6b7280;font-weight:500;">Email</td><td style="padding:4px 0;"><a href="mailto:${safe(email)}" style="color:#2563eb;text-decoration:none;">${safe(email)}</a></td></tr>
+                <tr><td style="padding:4px 0;color:#6b7280;font-weight:500;">Phone</td><td style="padding:4px 0;color:#111827;">${safe(phone) || "-"}</td></tr>
+                <tr><td style="padding:4px 0;color:#6b7280;font-weight:500;">City / Region</td><td style="padding:4px 0;color:#111827;">${safe(city) || "-"}</td></tr>
+                <tr><td style="padding:4px 0;color:#6b7280;font-weight:500;">Involvement</td><td style="padding:4px 0;color:#111827;">${safe(involvement) || "-"}</td></tr>
               </tbody>
             </table>
 
             ${
-              message
+              String(message || "").trim()
                 ? `
-            <div style="margin-top:10px;padding-top:10px;border-top:1px solid #e5e7eb;">
-              <h3 style="margin:0 0 6px;font-size:14px;font-weight:600;color:#111827;">Message</h3>
-              <p style="margin:0;font-size:14px;color:#374151;white-space:pre-line;">${safe(message)}</p>
-            </div>
-            `
+              <div style="margin-top:10px;padding-top:10px;border-top:1px solid #e5e7eb;">
+                <h3 style="margin:0 0 6px;font-size:14px;font-weight:600;color:#111827;">Message</h3>
+                <p style="margin:0;font-size:14px;color:#374151;white-space:pre-line;">${safe(message)}</p>
+              </div>`
                 : ""
             }
           </div>
+
           <div style="padding:12px 24px 16px;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;display:flex;justify-content:space-between;align-items:center;">
             <span>Submitted: ${new Date().toLocaleString()}</span>
             <span>Southcentral Alaska Offroad &amp; Outdoor Lions Club</span>
@@ -116,9 +118,7 @@ export default async function handler(req, res) {
               <strong>Southcentral Alaska Offroad &amp; Outdoor Lions Club</strong>.
             </p>
 
-            <p style="margin:0 0 12px;">
-              Here’s what to expect next:
-            </p>
+            <p style="margin:0 0 12px;">Here’s what to expect next:</p>
 
             <ul style="margin:0 0 12px 18px;padding:0;color:#374151;">
               <li>We’ll review your submission and follow up if we have any questions.</li>
@@ -143,33 +143,31 @@ export default async function handler(req, res) {
       </div>
     `;
 
-    await Promise.all([
-      // Admin notification
+    // Send emails and return IDs so you can confirm the send happened
+    const [adminResult, userResult] = await Promise.all([
       resend.emails.send({
         from: FROM,
         to: [ADMIN_TO],
-        replyTo: email, // ✅ replies to admin email go to the submitter
+        replyTo: String(email).trim(),
         subject: subjectAdmin,
         html: adminHtml,
-        text: `Name: ${name}
-Email: ${email}
-Phone: ${phone}
-City: ${city}
-Involvement: ${safe(involvement)}
+        text: `Name: ${safe(name)}
+Email: ${safe(email)}
+Phone: ${safe(phone) || "-"}
+City: ${safe(city) || "-"}
+Involvement: ${safe(involvement) || "-"}
 
 Message:
-${message || "-"}`,
+${safe(message) || "-"}`,
       }),
-
-      // User confirmation
       resend.emails.send({
         from: FROM,
-        to: [email],
-        replyTo: CLUB_REPLY_TO, // ✅ if the user hits reply, it goes to your club inbox
+        to: [String(email).trim()],
+        replyTo: CLUB_REPLY_TO,
         subject: subjectUser,
         html: userHtml,
         text:
-          `Thanks, ${name}!\n\n` +
+          `Thanks, ${safe(name)}!\n\n` +
           `We received your interest form for the Southcentral Alaska Offroad & Outdoor Lions Club.\n\n` +
           `What to expect next:\n` +
           `- We’ll review your submission and follow up if needed.\n` +
@@ -180,7 +178,11 @@ ${message || "-"}`,
       }),
     ]);
 
-    return res.status(200).json({ ok: true });
+    return res.status(200).json({
+      ok: true,
+      adminId: adminResult?.id || null,
+      userId: userResult?.id || null,
+    });
   } catch (err) {
     console.error("LIONSCLUB-JOIN ERROR:", err);
     return res.status(500).json({ ok: false, error: err?.message || "Unknown error" });
