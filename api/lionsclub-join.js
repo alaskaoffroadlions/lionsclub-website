@@ -20,7 +20,10 @@ export default async function handler(req, res) {
       honeypot = "",
     } = req.body || {};
 
-    if (honeypot) return res.status(200).json({ ok: true }); // silently ignore bots
+    if (honeypot) {
+  console.warn("HONEYPOT TRIGGERED:", honeypot);
+  return res.status(400).json({ ok: false, error: "Bot check triggered." });
+}
     if (!name?.trim() || !email?.trim()) {
       return res.status(400).json({ ok: false, error: "Name and email are required." });
     }
