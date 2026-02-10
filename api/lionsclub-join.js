@@ -178,11 +178,38 @@ ${safe(message) || "-"}`,
       }),
     ]);
 
-    return res.status(200).json({
-      ok: true,
-      adminId: adminResult?.id || null,
-      userId: userResult?.id || null,
-    });
+    // Return raw results so we can see the exact response shape
+if (!adminResult || !userResult) {
+  return res.status(500).json({ ok: false, error: "Resend returned empty result(s)." });
+}
+
+const adminId =
+  adminResult?.id ??
+  adminResult?.data?.id ??
+  adminResult?.data?.data?.id ??
+  null;
+
+const userId =
+  userResult?.id ??
+  userResult?.data?.id ??
+  userResult?.data?.data?.id ??
+  null;
+
+if (!adminId || !userId) {
+  console.error("RESEND_NO_ID_DEBUG", { adminResult, userResult });
+  return res.status(500).json({
+    ok: false,
+    error: "Resend returned no message id (debug attached).",
+    adminResult,
+    userResult,
+  });
+}
+
+return res.status(200).json({
+  ok: true,
+  adminId,
+  userId,
+});
   } catch (err) {
     console.error("LIONSCLUB-JOIN ERROR:", err);
     return res.status(500).json({ ok: false, error: err?.message || "Unknown error" });
