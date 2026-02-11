@@ -169,11 +169,11 @@ export default function LionsClubPage() {
               <div className="mt-6 grid grid-cols-3 gap-4 max-w-md text-sm">
                 <div>
                   <p className="text-xs uppercase tracking-wide text-neutral-400">
-                    Founding Members
+                    Current Founding Members
                   </p>
-                  <p className="text-xl font-bold text-amber-300">25</p>
+                  <p className="text-xl font-bold text-amber-300">21</p>
                   <p className="text-[11px] text-neutral-400 mt-1">
-                    Accepting founding members until the 4th.
+                    Accepting founding members 90 Days after 1-23-2026
                   </p>
                 </div>
                 <div>
@@ -414,12 +414,12 @@ export default function LionsClubPage() {
           <div className="rounded-3xl border border-neutral-200 bg-white p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
               <h3 className="text-xl md:text-2xl font-bold">
-                We’re recruiting 25 founding members
+                We’re recruiting!
               </h3>
               <p className="mt-2 text-neutral-700">
-                Founding membership includes a{" "}
+                Membership includes a{" "}
                 <strong>$35 application fee</strong> and{" "}
-                <strong>$110 yearly dues</strong>. Your support helps cover
+                <strong>$110 yearly dues</strong>. As a founding member, you hold a special status and receive a founding member pin. Your support helps cover
                 vehicle maintenance, free ride events, insurance, permits,
                 safety gear, training materials, and more.
               </p>
@@ -431,7 +431,7 @@ export default function LionsClubPage() {
               <ul className="text-sm text-neutral-800 space-y-1">
                 <li>• Which projects we take on first</li>
                 <li>• How we serve veterans &amp; special needs participants</li>
-                <li>• Club bylaws, leadership, and meeting structure</li>
+                <li>• Club expansion, leadership, and meeting structure</li>
               </ul>
               <a
                 href="#join"
@@ -462,11 +462,10 @@ export default function LionsClubPage() {
               Join the Southcentral Alaska Off-Road &amp; Outdoor Lions Club
             </h2>
             <p className="mt-3 text-neutral-700 text-center text-base md:text-lg">
-              We are officially a chartering club and are accepting{" "}
+              We are officially a chartered Lions Club and are still accepting{" "}
               <strong>founding members</strong>. Fill out this
-              form to apply as a founding member or general club member. We’ll
-              follow up with next steps, charter meeting details, and how to
-              submit your <strong>$35 application fee</strong> and{" "}
+              form and We’ll follow up with next steps, meeting details, and how to
+              submit your <strong>Application and $35 fee</strong> and{" "}
               <strong>$110 yearly dues</strong>.
             </p>
 
@@ -621,8 +620,7 @@ export default function LionsClubPage() {
       <section className="pb-12 bg-white">
         <div className="mx-auto max-w-6xl px-4">
           <p className="text-sm text-neutral-600">
-            *This page is for the official Southcentral Alaska Off-Road &amp; Outdoor Lions
-            Club, supported by Alaska Offroad Expedition.
+            *This page is for the official Southcentral Alaska Off-Road &amp; Created by members for members
           </p>
         </div>
       </section>
